@@ -1,7 +1,7 @@
 import numpy as np
 import tensorflow as tf
 #get the training images paths
-trainCats = tf.constant([("/Users/avynn/Documents/codingProjects/catGAN/resources/cats/cat.%d.jpg" % i) for i in range(4000)])
+trainCats = tf.constant([("resources/training_set/cats/cat.%d.jpg" % i) for i in range(4000)])
 # trainDogs = tf.constant([("/resources/training_set/dogs/dog.%d.jpg" % i) for i in range(4000)])
 # trainingSet = tf.add(trainCats, trainDogs)
 
@@ -25,6 +25,7 @@ with tf.Session() as sess:
 
         #get that image tensor!
         imageTensor = sess.run([image])
+        print(imageTensor)
 
         #deinit coord
         coord.request_stop()
