@@ -2,18 +2,30 @@ import numpy as np
 import tensorflow as tf
 #get the training images paths
 trainCats = tf.constant([("resources/training_set/cats/cat.%d.jpg" % i) for i in range(4000)])
-# trainDogs = tf.constant([("/resources/training_set/dogs/dog.%d.jpg" % i) for i in range(4000)])
-# trainingSet = tf.add(trainCats, trainDogs)
+trainDogs = tf.constant([("resources/training_set/dogs/dog.%d.jpg" % i) for i in range(4000)])
+trainingSet = tf.concat([trainCats, trainDogs], 0)
 
-#enque the image paths
-fileStringQueue = tf.train.string_input_producer(trainCats, capacity=80000)
 
-#create and read the images
-imageReader = tf.WholeFileReader()
-_, imageFile = imageReader.read(fileStringQueue)
+def readJPEG(filenameQue):
+        label = tf.Variable([0], dtype=tf.int8)
+        reader = tf.WholeFileReader()
+        key, recordString = reader.read(filenameQue)
+        example = tf.image.decode_jpeg(recordString)
+        return example, key
 
-#decode images
-image = tf.image.decode_jpeg(imageFile)
+def inputPipeline(filenames, batchSize):
+        filenameQueue = tf.train.string_input_producer(filenames)
+        example, label = readJPEG(filenameQueue)
+        minAfterDequeue = 10000
+        capacity = minAfterDequeue + 3 * batchSize
+        exampleBatch, labelBatch = tf.train.shuffle_batch([example, label], 
+                                                        batch_size=batchSize, 
+                                                        capacity=capacity, 
+                                                        min_after_dequeue=minAfterDequeue)
+        return exampleBatch, labelBatch 
+
+
+inputImages, inputLbaels = inputPipeline(trainingSet, 800)
 
 with tf.Session() as sess:
         #init variables in session
@@ -23,9 +35,7 @@ with tf.Session() as sess:
         coord = tf.train.Coordinator()
         threads = tf.train.start_queue_runners(coord=coord)
 
-        #get that image tensor!
-        imageTensor = sess.run([image])
-        print(imageTensor)
+        print(inputImages.getShape())
 
         #deinit coord
         coord.request_stop()
