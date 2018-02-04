@@ -1,8 +1,8 @@
 import numpy as np
 import tensorflow as tf
 #get the training images paths
-trainCats = tf.constant([("resources/training_set/cats/cat.%d.jpg" % i) for i in range(4000)])
-trainDogs = tf.constant([("resources/training_set/dogs/dog.%d.jpg" % i) for i in range(4000)])
+trainCats = tf.constant([("resources/training_set/cats/cat.%d.jpg" % i) for i in range(1,4000)])
+trainDogs = tf.constant([("resources/training_set/dogs/dog.%d.jpg" % i) for i in range(1,4000)])
 trainingSet = tf.concat([trainCats, trainDogs], 0)
 
 
@@ -10,7 +10,8 @@ def readJPEG(filenameQue):
         label = tf.Variable([0], dtype=tf.int8)
         reader = tf.WholeFileReader()
         key, recordString = reader.read(filenameQue)
-        example = tf.image.decode_jpeg(recordString)
+        examplePreProcess = tf.image.decode_jpeg(recordString)
+        example = tf.reshape(tf.strided_slice(examplePreProcess, [0,0,0], [32,32,3]), [32, 32, 3])
         return example, key
 
 def inputPipeline(filenames, batchSize):
@@ -34,8 +35,9 @@ with tf.Session() as sess:
         #init coordinator and start queing dem bois up!
         coord = tf.train.Coordinator()
         threads = tf.train.start_queue_runners(coord=coord)
+        liveImages = sess.run([inputImages])
 
-        print(inputImages.getShape())
+        print(liveImages)
 
         #deinit coord
         coord.request_stop()
