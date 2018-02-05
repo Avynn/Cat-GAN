@@ -7,7 +7,7 @@ trainDogs = tf.constant([("../resources/training_set/dogs/dog.%d.jpg" % i) for i
 trainingSet = tf.concat([trainCats, trainDogs], 0)
 
 #create batches
-inputImages, inputLbaels = imagePipeline.inputPipeline(trainingSet, 800)
+inputImages, inputLabels = imagePipeline.inputPipeline(trainingSet, 100)
 
 with tf.Session() as sess:
         #init variables in session
@@ -16,8 +16,8 @@ with tf.Session() as sess:
         #init coordinator and start queing dem bois up!
         coord = tf.train.Coordinator()
         threads = tf.train.start_queue_runners(coord=coord)
-
-        
+        sess.run([inputImages])
+        sess.run([inputLabels])
 
         #deinit coord
         coord.request_stop()
