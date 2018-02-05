@@ -1,5 +1,8 @@
 import random
 import tensorflow as tf
+import os
+import sys
+
 
 def readJPEG(filenameQue):
         randX = random.randint(0, 100)
@@ -23,4 +26,6 @@ def inputPipeline(filenames, batchSize):
                                                         num_threads=numThreads,
                                                         capacity=capacity, 
                                                         min_after_dequeue=minAfterDequeue)
-        return exampleBatch, labelBatch 
+        return exampleBatch, labelBatch
+
+
