@@ -43,9 +43,9 @@ def convertImages(folderPath, name):
                     'width': int64Feature(SHAPEX),
                     'depth': int64Feature(3),
                     'label': int64Feature(label),
-                    'rawImage': bytesFeature(imageToBytes)
+                    'rawImage': bytesFeature(imageToBytes.read())
                 }))
-                writer.write(example.serializeToString())
+                writer.write(example.SerializeToString())
 
         i += 1
     writer.close()
