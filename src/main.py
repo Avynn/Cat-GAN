@@ -1,6 +1,7 @@
 import tensorflow as tf
 import imagePipeline
 
+
 #get the training images paths
 trainCats = tf.constant([("../resources/training_set/cats/cat.%d.jpg" % i) for i in range(1,4000)], dtype=tf.string)
 trainDogs = tf.constant([("../resources/training_set/dogs/dog.%d.jpg" % i) for i in range(1,4000)], dtype=tf.string)

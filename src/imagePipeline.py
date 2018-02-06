@@ -13,7 +13,7 @@ def readJPEG(filenameQue):
         reader = tf.WholeFileReader()
         key, recordString = reader.read(filenameQue)
         examplePreProcess = tf.image.decode_jpeg(recordString)
-        exampleShape = tf.shape(example)
+        exampleShape = tf.shape(examplePreProcess)
         randX = random.randint(0, (exampleShape[0] - 32))
         randY = random.randint(0, (exampleShape[1] - 32))
 
