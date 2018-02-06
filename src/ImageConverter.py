@@ -27,8 +27,6 @@ def convertImages(folderPath, name):
             for j in range(len(dirNames)):
                 knownDirectories.append(dirNames[j])
         else:
-            print(knownDirectories)
-            print(i)
             for fileName in fileNames:
                 label = 0
                 path = folderPath + '/' + knownDirectories[i - 1] + "/" + fileName

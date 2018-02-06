@@ -3,29 +3,28 @@ import tensorflow as tf
 import os
 import sys
 
-# trainCats = tf.constant([("../resources/training_set/cats/cat.%d.jpg" % i) for i in range(1,4000)], dtype=tf.string)
-# trainDogs = tf.constant([("../resources/training_set/dogs/dog.%d.jpg" % i) for i in range(1,4000)], dtype=tf.string)
-# trainingSet = tf.concat([trainCats, trainDogs], 0)
+SHAPE = 64 * 64 * 3
 
 
-def readJPEG(filenameQue):
-        label = tf.Variable([0], dtype=tf.int8)
-        reader = tf.WholeFileReader()
-        key, recordString = reader.read(filenameQue)
-        examplePreProcess = tf.image.decode_jpeg(recordString)
-        exampleShape = tf.shape(examplePreProcess)
-        randX = random.randint(0, (exampleShape[0] - 32))
-        randY = random.randint(0, (exampleShape[1] - 32))
+def readExamples(filenameQue):
+        reader = tf.TFRecordReader()
+        _, serializedOutput = reader.read(filenameQue)
+        print(type(serializedOutput))
+        example = tf.train.Example()
+        example.ParseFromString(serializedOutput)
+        label = int(example.features.feature['label'].int64_list.value[0])
+        imgBytes = example.features.feature['rawImage'].bytes_list.value[0]
+        image = tf.decode_raw(imgBytes)
+        image.set_shape(SHAPE)
 
-        example = tf.reshape(tf.strided_slice(examplePreProcess, [randX,randY,0], [randX + 32, randY + 32, 3]), [32, 32, 3])
-        return example, key
+        return image, label
 
-def inputPipeline(filenames, batchSize):
-        minAfterDequeue = 10000
+def inputPipeline(filename, batchSize, numEpochs):
+        minAfterDequeue = 1000
         numThreads = 3
-        filenameQueue = tf.train.string_input_producer(filenames)
-        example, label = readJPEG(filenameQueue)
-        capacity = minAfterDequeue + (numThreads + 3) * batchSize
+        filenameQueue = tf.train.string_input_producer([filename], num_epochs=numEpochs)
+        example, label = readExamples(filenameQueue)
+        capacity = minAfterDequeue + numThreads + 3 * batchSize
         exampleBatch, labelBatch = tf.train.shuffle_batch([example, label],
                                                         batch_size=batchSize,
                                                         num_threads=numThreads,

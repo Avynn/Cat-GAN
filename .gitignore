@@ -58,6 +58,7 @@ docs/_build/
 target/
 
 # local files to ignore
-resources
+resources/test_set
+resources/training_set
 \.vscode
 \.DS_Store
