@@ -8,6 +8,7 @@ import sys
 
 class FileNameQueue:
     def __init__(self, folderPath, numEpochs):
+        # print("ping!")
         self.contents = []
 
         for i in range(numEpochs):
@@ -15,18 +16,12 @@ class FileNameQueue:
         
 
     def enqueuePaths(self, folderPath):
-        knownDirectories = []
         i = 0
         for (dirPath, dirNames, filenames) in os.walk(folderPath):
-            if(i == 0):
-                for j in range(len(dirNames)):
-                    knownDirectories.append(dirNames[j])
-            else:
+            if(len(dirNames) == 0):
                 for fileName in filenames:
-                    path = folderPath + "/" + knownDirectories[i - 1] + "/" + fileName
-                    self.contents.append(path)
-
-            i += 1
+                    self.contents.append(dirPath + "/" + fileName)
+        i += 1
 
     def dequeue(self):
         return self.contents.pop()
@@ -38,9 +33,9 @@ class FileNameQueue:
             return False
 
 def readIMG(pathQueue):
-    pathString = pathQueue.dequeue
+    pathString = pathQueue.dequeue()
     img = Image.open(pathString)
-    img = Image.resize((64,64))
+    img = img.resize((64,64))
     numpyImg = np.array(img)
     label = getLabel(pathString)
     return tf.convert_to_tensor(numpyImg), label

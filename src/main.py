@@ -7,7 +7,7 @@ import imagePipeline
 # trainingSet = tf.concat([trainCats, trainDogs], 0)
 
 #create batches
-inputImages, inputLabels = imagePipeline.inputPipeline("../resources/training.tfrecords", 100, 1)
+inputImages, inputLabels = imagePipeline.inputPipeline("../resources", 100, 1)
 
 # dataset = tf.contrib.data.TFRecordDataset('../resources/training.tfrecords')
 # datatset = dataset.map(imagePipeline.parseRecords)
@@ -28,8 +28,8 @@ with tf.Session() as sess:
         # printList = []
         # sess.run([nextBatch])
 
-        sess.run([inputImages])
-        print(inputImages)
+
+        print(sess.run(inputImages[0]))
 
 
         # print(inputImages)
