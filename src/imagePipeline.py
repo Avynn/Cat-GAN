@@ -1,40 +1,65 @@
+from PIL import Image
 import random
+import numpy as np
 import tensorflow as tf
 import os
+import io
 import sys
 
-def readExamples(filenameQue):
-        reader = tf.TFRecordReader()
-        _, serializedOutput = reader.read(filenameQue)
+class FileNameQueue:
+    def __init__(self, folderPath, numEpochs):
+        self.contents = []
 
-        print("ping!")
+        for i in range(numEpochs):
+            self.enqueuePaths(folderPath)
+        
 
-        features = {
-            'height': tf.FixedLenFeature([], tf.int64),
-            'width': tf.FixedLenFeature([], tf.int64),
-            'depth': tf.FixedLenFeature([], tf.int64),
-            'label': tf.FixedLenFeature([], tf.int64),
-            'rawImage': tf.FixedLenFeature([], tf.string)
-        }
+    def enqueuePaths(self, folderPath):
+        knownDirectories = []
+        i = 0
+        for (dirPath, dirNames, filenames) in os.walk(folderPath):
+            if(i == 0):
+                for j in range(len(dirNames)):
+                    knownDirectories.append(dirNames[j])
+            else:
+                for fileName in filenames:
+                    path = folderPath + "/" + knownDirectories[i - 1] + "/" + fileName
+                    self.contents.append(path)
 
-        example = tf.parse_single_example(
-            serializedOutput,
-            features,
-        )
+            i += 1
 
-        image = tf.decode_raw(example['rawImage'], tf.uint8)
+    def dequeue(self):
+        return self.contents.pop()
 
-        image = tf.reshape(image, [64,64,3])
+    def isEmpty(self):
+        if(len(self.contents) == 0):
+            return True
+        else:
+            return False
 
-        label = tf.cast(example['label'], tf.int32)
+def readIMG(pathQueue):
+    pathString = pathQueue.dequeue
+    img = Image.open(pathString)
+    img = Image.resize((64,64))
+    numpyImg = np.array(img)
+    label = getLabel(pathString)
+    return tf.convert_to_tensor(numpyImg), label
 
-        return image, label
 
-def inputPipeline(filename, batchSize, numEpochs):
-        minAfterDequeue = 1000
+def getLabel(path):
+    out = np.zeros((2))
+    if("cat" in path):
+        out[0] = 1
+        return tf.convert_to_tensor(out)
+    else:
+        out[1] = 1
+        return tf.convert_to_tensor(out)
+
+def inputPipeline(folderPath, batchSize, numEpochs):
+        minAfterDequeue = 100
         numThreads = 3
-        filenameQueue = tf.train.string_input_producer([filename], num_epochs=numEpochs)
-        example, label = readExamples(filenameQueue)
+        filenameQueue = FileNameQueue(folderPath, numEpochs)
+        example, label = readIMG(filenameQueue)
         capacity = minAfterDequeue + numThreads + 3 * batchSize
         exampleBatch, labelBatch = tf.train.shuffle_batch([example, label],
                                                         batch_size=batchSize,
