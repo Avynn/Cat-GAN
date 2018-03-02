@@ -13,7 +13,7 @@ class FileNameQueue:
 
         for i in range(numEpochs):
             self.enqueuePaths(folderPath)
-        
+
 
     def enqueuePaths(self, folderPath):
         i = 0
@@ -32,13 +32,15 @@ class FileNameQueue:
         else:
             return False
 
+    def dump(self):
+        return self.contents
+
 def readIMG(pathQueue):
-    pathString = pathQueue.dequeue()
-    img = Image.open(pathString)
-    img = img.resize((64,64))
-    numpyImg = np.array(img)
-    label = getLabel(pathString)
-    return tf.convert_to_tensor(numpyImg), label
+    reader = tf.WholeFileReader()
+    key, value = reader.read(pathQueue)
+    example = tf.image.decode_jpeg(value)
+    label = getLabel(key)
+    return example, label
 
 
 def getLabel(path):
@@ -53,8 +55,9 @@ def getLabel(path):
 def inputPipeline(folderPath, batchSize, numEpochs):
         minAfterDequeue = 100
         numThreads = 3
-        filenameQueue = FileNameQueue(folderPath, numEpochs)
-        example, label = readIMG(filenameQueue)
+        filenames = FileNameQueue(folderPath, numEpochs)
+        queue = tf.train.string_input_producer(filenames.dump())
+        example, label = readIMG(queue)
         capacity = minAfterDequeue + numThreads + 3 * batchSize
         exampleBatch, labelBatch = tf.train.shuffle_batch([example, label],
                                                         batch_size=batchSize,

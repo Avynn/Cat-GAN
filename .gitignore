@@ -62,4 +62,4 @@ resources/test_set
 resources/training_set
 \.vscode
 \.DS_Store
-resources\.zip
+*.zip
