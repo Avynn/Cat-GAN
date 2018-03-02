@@ -28,9 +28,7 @@ with tf.Session() as sess:
         # printList = []
         # sess.run([nextBatch])
 
-
-        print(sess.run(inputImages[0]))
-
+        print(inputImages.shape)
 
         # print(inputImages)
 

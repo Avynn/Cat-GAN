@@ -38,9 +38,10 @@ class FileNameQueue:
 def readIMG(pathQueue):
     reader = tf.WholeFileReader()
     key, value = reader.read(pathQueue)
-    example = tf.image.decode_jpeg(value)
-    label = getLabel(key)
-    return example, label
+    example = tf.image.decode_jpeg(value, channels=3)
+    example = tf.image.resize_images(example, [64,64])
+    # label = getLabel(key)
+    return example, key
 
 
 def getLabel(path):
@@ -66,12 +67,3 @@ def inputPipeline(folderPath, batchSize, numEpochs):
                                                         min_after_dequeue=minAfterDequeue)
         return exampleBatch, labelBatch
 
-
-# def parseRecords(exapmlePrototype):
-#     features = {
-#         'label': tf.FixedLenFeature((), tf.int64, default_value=0),
-#         'rawImage': tf.FixedLenFeature((), tf.string, default_value="")
-#     }
-#     parsedFeatures = tf.parse_single_example(exapmlePrototype, features)
-#     image = tf.decode_raw(parsedFeatures['rawImage'], tf.uint8)
-#     return image, parsedFeatures['label']
