@@ -1,19 +1,11 @@
 import tensorflow as tf
 import imagePipeline
-
-#get the training images paths
-# trainCats = tf.constant([("../resources/training_set/cats/cat.%d.jpg" % i) for i in range(1,4000)], dtype=tf.string)
-# trainDogs = tf.constant([("../resources/training_set/dogs/dog.%d.jpg" % i) for i in range(1,4000)], dtype=tf.string)
-# trainingSet = tf.concat([trainCats, trainDogs], 0)
+import model
 
 #create batches
 inputImages, inputLabels = imagePipeline.inputPipeline("../resources", 100, 1)
+logits, labels = model.model(inputImages, inputLabels)
 
-# dataset = tf.contrib.data.TFRecordDataset('../resources/training.tfrecords')
-# datatset = dataset.map(imagePipeline.parseRecords)
-# dataset = dataset.batch(32)
-# iterator = dataset.make_initializable_iterator()
-# nextBatch = iterator.get_next()
 
 with tf.Session() as sess:
         #init variables in session
@@ -28,7 +20,7 @@ with tf.Session() as sess:
         # printList = []
         # sess.run([nextBatch])
 
-        print(inputImages.shape)
+        print(sess.run([logits]))
 
         # print(inputImages)
 

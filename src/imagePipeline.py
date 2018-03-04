@@ -38,20 +38,22 @@ class FileNameQueue:
 def readIMG(pathQueue):
     reader = tf.WholeFileReader()
     key, value = reader.read(pathQueue)
-    example = tf.image.decode_jpeg(value, channels=3)
-    example = tf.image.resize_images(example, [64,64])
-    # label = getLabel(key)
+    decodedExample = tf.image.decode_jpeg(value, channels=3)
+    exampleFull = tf.image.resize_images(decodedExample, [64,64])
+    example = tf.reshape(exampleFull, [4096, 3])
     return example, key
 
 
-def getLabel(path):
-    out = np.zeros((2))
-    if("cat" in path):
-        out[0] = 1
-        return tf.convert_to_tensor(out)
-    else:
-        out[1] = 1
-        return tf.convert_to_tensor(out)
+def getLabel(paths):
+    shape = paths[0].shape
+
+    out = np.zeros((shape[0], 2))
+    for i in range(shape[0]):
+        if("cat" in paths[0][i]):
+            out[i, 0] = 1
+        else:
+            out[i, 1] = 1
+    return tf.convert_to_tensor(out)
 
 def inputPipeline(folderPath, batchSize, numEpochs):
         minAfterDequeue = 100
