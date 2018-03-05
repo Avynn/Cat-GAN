@@ -28,5 +28,5 @@ def model(flatInputImages, labels):
     Bfc3 = biasVariable([100, 1,2])
     logits = tf.nn.softmax(tf.matmul(in3, Wfc3) + Bfc3)
 
-    actualLabel = tf.py_func(imagePipeline.getLabel, [labels], tf.float32)
+    
     return logits, actualLabel

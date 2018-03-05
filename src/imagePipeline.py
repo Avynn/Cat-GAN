@@ -41,19 +41,19 @@ def readIMG(pathQueue):
     decodedExample = tf.image.decode_jpeg(value, channels=3)
     exampleFull = tf.image.resize_images(decodedExample, [64,64])
     example = tf.reshape(exampleFull, [4096, 3])
-    return example, key
+    label = tf.py_func(getLabel, [key], tf.float32)
+    return example, label
 
 
 def getLabel(paths):
-    shape = paths.shape 
+    arrToReturn = np.zeros((2))
+    if(b"cat" in paths[0]):
+        arrToReturn[0] = 1
+        return tf.convert_to_tensor(arrToReturn, dtype=tf.float32)
+    else:
+        arrToReturn[1] = 1
+        return tf.convert_to_tensor(arrToReturn, dtype=tf.float32)
 
-    out = np.zeros((shape[0], 2))
-    for i in range(shape[0]):
-        if("cat" in str(paths[i], "utf-8")):
-            out[i, 0] = 1
-        else:
-            out[i, 1] = 1
-    return tf.convert_to_tensor(out)
 
 def inputPipeline(folderPath, batchSize, numEpochs):
         minAfterDequeue = 100
@@ -68,4 +68,3 @@ def inputPipeline(folderPath, batchSize, numEpochs):
                                                         capacity=capacity,
                                                         min_after_dequeue=minAfterDequeue)
         return exampleBatch, labelBatch
-

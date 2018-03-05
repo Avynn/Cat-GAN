@@ -1,4 +1,5 @@
 import tensorflow as tf
+from tensorflow.python import debug as tf_debug
 import imagePipeline
 import model
 import backProp
@@ -9,6 +10,9 @@ logits, labels = model.model(inputImages, inputLabels)
 accuracy = backProp.evalLogits(logits, labels)
 
 with tf.Session() as sess:
+
+        sess = tf_debug.LocalCLIDebugWrapperSession(sess)
+
         #init variables in session
         tf.global_variables_initializer().run()
         tf.local_variables_initializer().run()
