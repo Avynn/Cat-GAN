@@ -45,11 +45,11 @@ def readIMG(pathQueue):
 
 
 def getLabel(paths):
-    shape = paths[0].shape
+    shape = paths.shape 
 
     out = np.zeros((shape[0], 2))
     for i in range(shape[0]):
-        if("cat" in paths[0][i]):
+        if("cat" in str(paths[i], "utf-8")):
             out[i, 0] = 1
         else:
             out[i, 1] = 1
