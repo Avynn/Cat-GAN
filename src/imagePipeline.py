@@ -47,7 +47,7 @@ def readIMG(pathQueue):
 
 def getLabel(path):
     arrToReturn = np.zeros((2))
-    if(b"cat" in paths[0]):
+    if("cat" in path[0]):
         arrToReturn[0] = 1
         return arrToReturn
     else:
