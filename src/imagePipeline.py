@@ -20,7 +20,8 @@ class FileNameQueue:
         for (dirPath, dirNames, filenames) in os.walk(folderPath):
             if(len(dirNames) == 0):
                 for fileName in filenames:
-                    self.contents.append(dirPath + "/" + fileName)
+                    path = dirPath + "/" + fileName
+                    self.contents.append((path,getLabel(path)))
         i += 1
 
     def dequeue(self):
@@ -44,15 +45,14 @@ def readIMG(pathQueue):
     label = tf.py_func(getLabel, [key], tf.float32)
     return example, label
 
-
-def getLabel(paths):
+def getLabel(path):
     arrToReturn = np.zeros((2))
     if(b"cat" in paths[0]):
         arrToReturn[0] = 1
-        return tf.convert_to_tensor(arrToReturn, dtype=tf.float32)
+        return arrToReturn
     else:
         arrToReturn[1] = 1
-        return tf.convert_to_tensor(arrToReturn, dtype=tf.float32)
+        return arrToReturn
 
 
 def inputPipeline(folderPath, batchSize, numEpochs):
