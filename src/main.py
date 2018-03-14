@@ -7,11 +7,11 @@ import backProp
 #create batches
 inputImages, inputLabels = imagePipeline.inputPipeline("../resources", 100, 1)
 logits, labels = model.model(inputImages, inputLabels)
-accuracy = backProp.evalLogits(logits, labels)
+# accuracy = backProp.evalLogits(logits, labels)
 
 with tf.Session() as sess:
 
-        sess = tf_debug.LocalCLIDebugWrapperSession(sess)
+        # sess = tf_debug.LocalCLIDebugWrapperSession(sess)
 
         #init variables in session
         tf.global_variables_initializer().run()
@@ -21,7 +21,7 @@ with tf.Session() as sess:
         coord = tf.train.Coordinator()
         threads = tf.train.start_queue_runners(coord=coord)
 
-        print(sess.run([accuracy]))
+        print(sess.run([inputLabels]))
 
         #deinit coord
         coord.request_stop()

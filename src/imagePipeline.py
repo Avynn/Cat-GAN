@@ -59,8 +59,8 @@ def getLabel(path):
 def inputPipeline(folderPath, batchSize, numEpochs):
         minAfterDequeue = 100
         numThreads = 3
-        filenames = FileNameQueue(folderPath, numEpochs)
-        queue = tf.train.string_input_producer(filenames.dump())
+        filenames = FileNameQueue(folderPath, numEpochs).dump()
+        queue = tf.train.string_input_producer(filenames, num_epochs=numEpochs)
         example, label = readIMG(queue)
         capacity = minAfterDequeue + numThreads + 3 * batchSize
         exampleBatch, labelBatch = tf.train.shuffle_batch([example, label],
