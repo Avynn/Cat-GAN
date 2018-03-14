@@ -21,7 +21,7 @@ class FileNameQueue:
             if(len(dirNames) == 0):
                 for fileName in filenames:
                     path = dirPath + "/" + fileName
-                    self.contents.append((path,getLabel(path)))
+                    self.contents.append(path)
         i += 1
 
     def dequeue(self):
@@ -43,11 +43,12 @@ def readIMG(pathQueue):
     exampleFull = tf.image.resize_images(decodedExample, [64,64])
     example = tf.reshape(exampleFull, [4096, 3])
     label = tf.py_func(getLabel, [key], tf.float32)
+    label.set_shape([2])
     return example, label
 
 def getLabel(path):
     arrToReturn = np.zeros((2))
-    if("cat" in path[0]):
+    if("cat" in path):
         arrToReturn[0] = 1
         return arrToReturn
     else:
