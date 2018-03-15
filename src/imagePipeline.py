@@ -6,35 +6,43 @@ import os
 import io
 import sys
 
-class FileNameQueue:
-    def __init__(self, folderPath, numEpochs):
-        # print("ping!")
-        self.contents = []
+# class FileNameQueue:
+#     def __init__(self, folderPaths):
+#         # print("ping!")
+#         self.contents = []
+#
+#         self.enqueuePaths(folderPaths)
+#
+#
+#     def enqueuePaths(self, folderPath):
+#         i = 0
+#         for (dirPath, dirNames, filenames) in os.walk(folderPath):
+#             if(len(dirNames) == 0):
+#                 for fileName in filenames:
+#                     path = dirPath + "/" + fileName
+#                     self.contents.append(path)
+#         i += 1
+#
+#     def dequeue(self):
+#         return self.contents.pop()
+#
+#     def isEmpty(self):
+#         if(len(self.contents) == 0):
+#             return True
+#         else:
+#             return False
+#
+#     def dump(self):
+#         return self.contents
 
-        for i in range(numEpochs):
-            self.enqueuePaths(folderPath)
-
-
-    def enqueuePaths(self, folderPath):
-        i = 0
-        for (dirPath, dirNames, filenames) in os.walk(folderPath):
-            if(len(dirNames) == 0):
-                for fileName in filenames:
-                    path = dirPath + "/" + fileName
-                    self.contents.append(path)
-        i += 1
-
-    def dequeue(self):
-        return self.contents.pop()
-
-    def isEmpty(self):
-        if(len(self.contents) == 0):
-            return True
-        else:
-            return False
-
-    def dump(self):
-        return self.contents
+def getPaths(folderPath):
+    contents = []
+    for (dirPath, dirNames, filenames) in os.walk(folderPath):
+        if(len(dirNames) == 0):
+            for fileName in filenames:
+                path = dirPath + "/" + fileName
+                contents.append(path)
+    return contents
 
 def readIMG(pathQueue):
     reader = tf.WholeFileReader()
@@ -48,7 +56,7 @@ def readIMG(pathQueue):
 
 def getLabel(path):
     arrToReturn = np.zeros((2))
-    if("cat" in path):
+    if(b"cat" in path):
         arrToReturn[0] = 1
         return arrToReturn
     else:
@@ -59,8 +67,8 @@ def getLabel(path):
 def inputPipeline(folderPath, batchSize, numEpochs):
         minAfterDequeue = 100
         numThreads = 3
-        filenames = FileNameQueue(folderPath, numEpochs).dump()
-        queue = tf.train.string_input_producer(filenames, num_epochs=numEpochs)
+        filenames = tf.constant(getPaths(folderPath), dtype=tf.string)
+        queue = tf.train.string_input_producer(filenames, num_epochs=numEpochs, capacity=10500)
         example, label = readIMG(queue)
         capacity = minAfterDequeue + numThreads + 3 * batchSize
         exampleBatch, labelBatch = tf.train.shuffle_batch([example, label],

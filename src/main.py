@@ -14,8 +14,10 @@ with tf.Session() as sess:
         # sess = tf_debug.LocalCLIDebugWrapperSession(sess)
 
         #init variables in session
-        tf.global_variables_initializer().run()
-        tf.local_variables_initializer().run()
+        # tf.global_variables_initializer().run()
+        # tf.local_variables_initializer().run()
+        sess.run(tf.global_variables_initializer())
+        sess.run(tf.local_variables_initializer())
 
         #init coordinator and start queing dem bois up!
         coord = tf.train.Coordinator()
