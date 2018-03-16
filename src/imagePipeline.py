@@ -5,7 +5,7 @@ import tensorflow as tf
 import os
 import io
 import sys
-from tensorflow.python import debug as tf_debug
+# from tensorflow.python import debug as tf_debug
 
 # class FileNameQueue:
 #     def __init__(self, folderPaths):
@@ -108,6 +108,6 @@ if __name__ == "__main__":
         for i in range(10):
             print(sess.run(labelBatch))
 
-    
+
         coord.request_stop()
         coord.join(threads)
