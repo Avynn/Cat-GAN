@@ -5,13 +5,14 @@ import model
 import backProp
 
 #create batches
+print("ping!")
 inputImages, inputLabels = imagePipeline.inputPipeline("../resources", 100, 1)
 logits, labels = model.model(inputImages, inputLabels)
-# accuracy = backProp.evalLogits(logits, labels)
+accuracy = backProp.evalLogits(logits, labels)
 
 with tf.Session() as sess:
 
-        # sess = tf_debug.LocalCLIDebugWrapperSession(sess)
+        sess = tf_debug.LocalCLIDebugWrapperSession(sess)
 
         #init variables in session
         # tf.global_variables_initializer().run()
@@ -23,7 +24,10 @@ with tf.Session() as sess:
         coord = tf.train.Coordinator()
         threads = tf.train.start_queue_runners(coord=coord)
 
-        print(sess.run([inputLabels]))
+
+
+        for i in range(30):  
+                print(sess.run(accuracy))
 
         #deinit coord
         coord.request_stop()

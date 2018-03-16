@@ -5,6 +5,7 @@ import tensorflow as tf
 import os
 import io
 import sys
+from tensorflow.python import debug as tf_debug
 
 # class FileNameQueue:
 #     def __init__(self, folderPaths):
@@ -55,7 +56,7 @@ def readIMG(pathQueue):
     return example, label
 
 def getLabel(path):
-    arrToReturn = np.zeros((2))
+    arrToReturn = np.zeros((2), dtype=np.float32)
     if(b"cat" in path):
         arrToReturn[0] = 1
         return arrToReturn
@@ -77,3 +78,36 @@ def inputPipeline(folderPath, batchSize, numEpochs):
                                                         capacity=capacity,
                                                         min_after_dequeue=minAfterDequeue)
         return exampleBatch, labelBatch
+
+if __name__ == "__main__":
+    filenames = tf.constant(getPaths("../resources"), dtype=tf.string)
+    queue = tf.train.string_input_producer(filenames)
+    example, label = readIMG(queue)
+
+    exampleBatch, labelBatch = tf.train.shuffle_batch([example, label],
+                                                        batch_size=100,
+                                                        num_threads=3,
+                                                        capacity=450,
+                                                        min_after_dequeue=100)
+
+    with tf.Session() as sess:
+
+        # sess = tf_debug.LocalCLIDebugWrapperSession(sess)
+
+        sess.run(tf.global_variables_initializer())
+        sess.run(tf.local_variables_initializer())
+
+        coord = tf.train.Coordinator()
+        threads = tf.train.start_queue_runners(coord=coord)
+
+        # for i in range(100):
+        #     sess.run(label)
+
+        #     print(sess.run(queue.size()))
+
+        for i in range(10):
+            print(sess.run(labelBatch))
+
+    
+        coord.request_stop()
+        coord.join(threads)
