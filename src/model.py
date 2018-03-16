@@ -32,6 +32,6 @@ def model(flatInputImages, labels):
     Bfc4 = biasVariable([100,3,2])
     logits = tf.nn.softmax(tf.matmul(Hfc3, Wfc4) + Bfc4)
 
-    averageActivation = (tf.reduce_sum(tf.transpose(logits, perm=[0,2,1]), axis=2) / 3)
+    # averageActivation = (tf.reduce_sum(tf.transpose(logits, perm=[0,2,1]), axis=2) / 3)
 
-    return averageActivation, labels
+    return logits, labels
