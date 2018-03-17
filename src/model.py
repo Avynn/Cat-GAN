@@ -33,4 +33,10 @@ def model(flatInputImages, labels):
 
     logits = tf.reshape(logits, [100,2])
 
-    return logits, labels
+    crossEntropy = tf.nn.softmax_cross_entropy_with_logits(labels=labels, logits=logits)
+
+    correctPrediction = tf.equal(tf.argmax(logits, 1), tf.argmax(labels, 1))
+    accuracy = tf.reduce_mean(tf.cast(correctPrediction, tf.float32))
+    tf.summary.scalar("Cross Entropy", crossEntropy)
+
+    return crossEntropy, accuracy
