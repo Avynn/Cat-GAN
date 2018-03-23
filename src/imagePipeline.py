@@ -5,36 +5,6 @@ import tensorflow as tf
 import os
 import io
 import sys
-# from tensorflow.python import debug as tf_debug
-
-# class FileNameQueue:
-#     def __init__(self, folderPaths):
-#         # print("ping!")
-#         self.contents = []
-#
-#         self.enqueuePaths(folderPaths)
-#
-#
-#     def enqueuePaths(self, folderPath):
-#         i = 0
-#         for (dirPath, dirNames, filenames) in os.walk(folderPath):
-#             if(len(dirNames) == 0):
-#                 for fileName in filenames:
-#                     path = dirPath + "/" + fileName
-#                     self.contents.append(path)
-#         i += 1
-#
-#     def dequeue(self):
-#         return self.contents.pop()
-#
-#     def isEmpty(self):
-#         if(len(self.contents) == 0):
-#             return True
-#         else:
-#             return False
-#
-#     def dump(self):
-#         return self.contents
 
 def getPaths(folderPath):
     contents = []

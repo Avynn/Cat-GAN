@@ -37,6 +37,17 @@ def model(flatInputImages, labels):
 
     correctPrediction = tf.equal(tf.argmax(logits, 1), tf.argmax(labels, 1))
     accuracy = tf.reduce_mean(tf.cast(correctPrediction, tf.float32))
-    tf.summary.scalar("Cross Entropy", crossEntropy)
+    # tf.summary.scalar("Cross Entropy", crossEntropy)
 
     return crossEntropy, accuracy
+
+
+if __name__ == "__main__":
+    images, labels = imagePipeline.inputPipeline("../resources", 100, 1)
+
+    entropy, acc = model(images, labels)
+
+    with tf.Session() as sess:
+        print(sess.run(entropy))
+        
+
