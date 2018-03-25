@@ -63,3 +63,8 @@ resources/training_set
 \.vscode
 \.DS_Store
 *.zip
+\.env/bin/activate
+
+tensorBoard/events\.out\.tfevents\.1521962097\.DESKTOP-SLTHNHP
+
+\.env/
